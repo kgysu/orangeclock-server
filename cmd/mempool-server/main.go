@@ -2,12 +2,13 @@ package main
 
 import (
 	"log/slog"
-	"mempool-server/pkg/routes"
 	"net/http"
 	"time"
+
+	"mempool-server/pkg/routes"
 )
 
-const localAddr = ":8080"
+const localAddr = ":48080"
 
 func main() {
 	slog.SetLogLoggerLevel(slog.LevelInfo)

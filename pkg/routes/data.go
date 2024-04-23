@@ -3,12 +3,14 @@ package routes
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/text/language"
 	"io"
 	"net/http"
+	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 
+	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 )
 
@@ -29,7 +31,7 @@ func LoadMempoolData() string {
 		data += "\n"
 	}
 
-	tipHeight, err := getCurrentTipHeight()
+	tipHeight, err := getCurrentTipHeightInternal()
 	if err != nil {
 		data += fmt.Sprintf("Error tip: %s\n", err.Error())
 	} else {
@@ -102,6 +104,19 @@ func getCurrentPrice() (*PriceResponse, error) {
 
 // Latest Block (tip height)
 
+func getCurrentTipHeightInternal() (int, error) {
+	out, err := exec.Command("bitcoin-cli", "getblockcount").Output()
+	if err != nil {
+		return 0, err
+	}
+	val := strings.Replace(string(out), "\n", "", 1)
+	res, err := strconv.Atoi(val)
+	if err != nil {
+		return 0, nil
+	}
+	return res, nil
+}
+
 func getCurrentTipHeight() (int, error) {
 	client := http.DefaultClient
 	resp, err := client.Get("https://mempool.space/api/blocks/tip/height")
@@ -127,7 +142,7 @@ func getNextHalving(currentHeight int) (string, error) {
 	nextHalvingBlock := ((currentHeight / 210_000) + 1) * 210_000
 	blocksToGo := nextHalvingBlock - currentHeight
 	percentage := (100 / nextHalvingBlock) * blocksToGo
-	return printer.Sprintf(" %d/%d(%d%s)", nextHalvingBlock, blocksToGo, percentage, "%"), nil
+	return printer.Sprintf(" %d (%d%s)", blocksToGo, percentage, "%"), nil
 }
 
 // Fees
