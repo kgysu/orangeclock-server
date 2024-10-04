@@ -141,8 +141,8 @@ func getCurrentTipHeight() (int, error) {
 func getNextHalving(currentHeight int) (string, error) {
 	nextHalvingBlock := ((currentHeight / 210_000) + 1) * 210_000
 	blocksToGo := nextHalvingBlock - currentHeight
-	percentage := (100 / nextHalvingBlock) * blocksToGo
-	return printer.Sprintf(" %d (%d%s)", blocksToGo, percentage, "%"), nil
+	perc := 100 * (float64(210_000-float64(blocksToGo)) / float64(210_000))
+	return printer.Sprintf(" %d (%.1f%s)", blocksToGo, perc, "%"), nil
 }
 
 // Fees
