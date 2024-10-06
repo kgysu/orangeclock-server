@@ -27,7 +27,7 @@ func LoadMempoolData() string {
 	} else {
 		data += fmt.Sprintf("PRICE (%s)\n", price.TimeS())
 		data += printer.Sprintf(" $%d   +%d\n", price.Usd, price.Chf)
-		data += printer.Sprintf("1$: %d\n", price.MoscowTime())
+		data += printer.Sprintf("1$: %d - %s\n", price.MoscowTime(), time.Now().Format("02.01.2006 15:04"))
 		data += "\n"
 	}
 
